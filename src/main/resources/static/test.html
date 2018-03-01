@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>协议测试</title>
+</head>
+<body>
+	<div>
+		<div id="httpTest">
+			<h2>HTTP协议</h2>
+			<label>url:</label>
+			<input id="url" type="text" style="width:40%">
+			<label>Basic:</label>
+			<input id="basic" type="text" style="width:30%">
+			<select id="method">
+				<option value="GET">GET</option>
+				<option value="PUT">PUT</option>
+				<option value="POST">POST</option>
+				<option value="DELETE">DELETE</option>
+			</select>
+			<select id="content-type">
+				<option value="application/json;">JSON</option>
+				<option value="text/plain;">TEXT</option>
+			</select>
+			<input type="button" value="发送" onclick="http_send()" /><br>
+			<label>发送的http body数据：</label><br>
+			<textarea id="send_data" rows="12" style="width:90%"></textarea><br>
+			<label>接收的http body数据：</label><br>
+			<textarea id="recv_data" rows="12" style="width:90%"></textarea><br>
+		</div>
+	</div>
+	<script src="jquery-1.11.3.min.js"></script>
+	<script>
+		$(function() {
+			$("#url").val("api/");
+		});
+
+		function http_send() {
+			$.ajax({
+				type : $("#method").val(),
+				url : $("#url").val(),
+				dataType : "text",
+				contentType : $("#content-type").val() + " charset=utf-8",
+				xhrFields : {
+					withCredentials : true
+				},
+				headers: {
+		            "Authorization":"Basic " + $("#basic").val()
+		        },
+				data : $("#send_data").val(),
+				success : function(data) {
+					$("#recv_data").val(data);
+				},
+				error : function(jqXHR) {
+					$("#recv_data").val(jqXHR.responseText);
+					alert("错误" + jqXHR.status + ":" + jqXHR.statusText);
+				}
+			})
+		}
+	</script>
+</body>
+</html>

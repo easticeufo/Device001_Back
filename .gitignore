@@ -1,0 +1,10 @@
+.DS_Store
+.svn/
+.settings/
+.classpath
+.project
+target/
+
+src/main/resources/application-*.properties
+!src/main/resources/application-config.properties
+
