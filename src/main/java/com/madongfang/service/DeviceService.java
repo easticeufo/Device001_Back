@@ -504,6 +504,8 @@ public class DeviceService {
 	
 	public StopChargeResult stopCharge(String deviceId, int plugId, int remain)
 	{
+		final int freeTime = 3 * 60 * 1000; // 免费时间，单位毫秒秒
+		
 		Device device = deviceRepository.findOne(deviceId);
 		if (device == null)
 		{
@@ -531,7 +533,6 @@ public class DeviceService {
 			return null;
 		}
 		
-		int refund = 0;
 		int limitPrice = plug.getLimitPrice();
 		int overdraft = 1000;
 		if (plug.getOverdraft() != null)
@@ -563,14 +564,23 @@ public class DeviceService {
 			powerConsumption = 0;
 		}
 		
-		if (now.getTime() - startTime.getTime() <= 60 * 1000) // 充电时间小于等于1分钟不收费
+		int refund;
+		if (freeCharge)
+		{
+			refund = 0;
+		}
+		else if (now.getTime() - startTime.getTime() <= freeTime)
 		{
 			refund = limitPrice;
-			if (remain == 0) // 1分钟之内不可能把电消耗完，导致remain等于0
+			if (remain == 0) // 短时间内不可能把电消耗完，导致remain等于0
 			{
 				logger.warn("设备结束充电remain错误:powerConsumption={}", powerConsumption);
 				powerConsumption = 0;
 			}
+		}
+		else if ("time".equals(device.getType()))
+		{
+			refund = 0;
 		}
 		else 
 		{
@@ -585,10 +595,6 @@ public class DeviceService {
 				logger.info("充电限额:{},实际电费:{}", limitPrice, powerFee);
 				refund = 0;
 			}
-		}
-		if (freeCharge || "time".equals(device.getType()))
-		{
-			refund = 0;
 		}
 		
 		if (device.getTrialCount() != null && device.getTrialCount() > 0)
