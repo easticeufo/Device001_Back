@@ -121,7 +121,7 @@ public class Custom {
 	@Column(name="endingBalance")
 	private int balance;
 	
-	private int reserveDay;
+	private int reserveDay; // 用于表示给新用户赠送的金额，单位：分
 	
 	private int limitPrice;
 	

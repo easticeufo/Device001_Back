@@ -72,6 +72,7 @@ public class LoginController {
 				
 				Custom custom = null;
 				Manager manager = null;
+				boolean gotoSubscribePage = false;
 				if (code != null) // 微信扫一扫
 				{
 					WechatUtil.UserInfo userInfo = wechatUtil.getUserInfo(code);
@@ -89,6 +90,17 @@ public class LoginController {
 					else
 					{
 						custom = customService.wechatLogin(userInfo);
+						if (custom.getReserveDay() != 0)
+						{
+							if (wechatUtil.isSubscribed(userInfo.getOpenid()))
+							{
+								customService.syncBalance(custom.getId());
+							}
+							else
+							{
+								gotoSubscribePage = true;
+							}
+						}
 					}
 				}
 				else // 支付宝扫一扫
@@ -121,15 +133,22 @@ public class LoginController {
 				String redirect = basePath + "/index.html#?";
 				if (deviceCode != null) // 扫描设备上的二维码跳转
 				{
-					redirect += String.format("/devices/%s/plugs", deviceCode);
+					if (gotoSubscribePage)
+					{
+						redirect += "/subscribePage";
+					}
+					else
+					{
+						redirect += String.format("/devices/%s/plugs", deviceCode);
+					}
 				}
 				else if (cardId != null) // 扫描卡上的二维码跳转
 				{
 					redirect += "/mine";
 				}
-				else if (menu != null) // 扫描卡上的二维码跳转
+				else if (menu != null) // 点击菜单选项跳转
 				{
-					redirect += ("/" + menu); // 点击菜单选项跳转
+					redirect += ("/" + menu);
 				}
 				else // 程序调试跳转
 				{

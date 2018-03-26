@@ -875,7 +875,7 @@ public class DeviceService {
 		
 		PlugPK plugPK = new PlugPK(plugId, device.getCode());
 		Plug plug = plugRepository.findOne(plugPK);
-		if (plug == null)
+		if (plug == null || "E".equals(plug.getStatus()))
 		{
 			logger.warn("无效的插座");
 			cardChargeReturnApi.setReturnCode(-1);

@@ -3,6 +3,7 @@ package com.madongfang.service;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class CustomService {
 		custom = new Custom();
 		custom.setBalance(cardApi.getBalance());
 		custom.setGenerateTime(null);
-		custom.setLimitPrice(200);
+		custom.setLimitPrice(300);
 		custom.setLoginCode(null);
 		custom.setNickname(cardApi.getId());
 		custom.setPhoneNumber(null);
@@ -107,7 +108,7 @@ public class CustomService {
 			custom.setLoginCode(null);
 			custom.setNickname(userInfo.getNickname());
 			custom.setPhoneNumber(null);
-			custom.setReserveDay(0);
+			custom.setReserveDay(newCustomGiftAmount);
 			custom.setType("W");
 			custom.setUserOpenId(userInfo.getOpenid());
 			custom.setUnionid(userInfo.getUnionid());
@@ -214,13 +215,32 @@ public class CustomService {
 		return custom.getBalance();
 	}
 	
+	/**
+	 * 将赠送给用户的金额同步到用户的账户余额上
+	 * 
+	 * @param customId
+	 */
+	public void syncBalance(int customId) {
+		Custom custom = customRepository.findOne(customId);
+		if (custom != null)
+		{
+			custom.setBalance(custom.getBalance() + custom.getReserveDay());
+			custom.setReserveDay(0);
+			customRepository.save(custom);
+		}
+		
+		return;
+	}
+	
+	@Value("${manufacturer.newCustomGiftAmount:0}")
+	private int newCustomGiftAmount;
+	
 	@Autowired
 	private CommonUtil commonUtil;
 	
 	@Autowired
 	private CustomRepository customRepository;
 	
-
 	@Autowired
 	private ManagerRepository managerRepository;
 	
