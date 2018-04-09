@@ -207,8 +207,10 @@ public class LoginController {
 					model.addAttribute("errorInfo", "请使用微信或支付宝扫一扫登陆!");
 					site = "error";
 				}
+				
+				logger.debug("site={}", site);
 
-				return  site;
+				return site;
 				
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block

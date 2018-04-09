@@ -364,6 +364,7 @@ public class DeviceService {
 			plug.setLimitPower((limitPrice*plug.getOverdraft()/1000 - plug.getAttachPrice()) * 1000 / plug.getUnitPrice());
 			plug.setLimitTime(12 * 60);
 		}
+		plug.setRemainTime(plug.getLimitTime());
 		plugRepository.save(plug);
 		
 		StartCustomRecord startCustomRecord = new StartCustomRecord();
@@ -802,6 +803,10 @@ public class DeviceService {
 				{
 					remainTime = plug.getRemainTime();
 				}
+				else 
+				{
+					remainTime = plug.getLimitTime();
+				}
 			}
 			
 			remainList.add(remain);
@@ -959,6 +964,7 @@ public class DeviceService {
 		plug.setUpdateTime(now);
 		plug.setLimitPower(limitPower);
 		plug.setLimitTime(limitTime);
+		plug.setRemainTime(plug.getLimitTime());
 		plugRepository.save(plug);
 		
 		StartCustomRecord startCustomRecord = new StartCustomRecord();
@@ -1305,6 +1311,7 @@ public class DeviceService {
 			}
 			plug.setLimitPower(limitPower);
 			plug.setLimitTime(limitTime);
+			plug.setRemainTime(plug.getLimitTime());
 			plugRepository.save(plug);
 			
 			if (!deviceControlUtil.startCharge(device.getId(), plugId, limitPower, limitTime))
