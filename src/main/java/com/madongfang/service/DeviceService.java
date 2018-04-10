@@ -824,7 +824,14 @@ public class DeviceService {
 		paramReturnApi.setMaxDevicePower(device.getMaxDevicePower());
 		paramReturnApi.setMaxPlugPower(device.getMaxPlugPower());
 		paramReturnApi.setRemainList(remainList);
-		paramReturnApi.setRemainTimeList(remainTimeList);
+		if ("time".equals(device.getType()))
+		{
+			paramReturnApi.setRemainTimeList(remainTimeList);
+		}
+		else
+		{
+			paramReturnApi.setRemainTimeList(null);
+		}
 		
 		return paramReturnApi;
 	}
